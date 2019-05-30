@@ -1,44 +1,116 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Gallery from 'react-grid-gallery';
-
-
+import FileBase64 from 'react-file-base64';
+import Gallery from 'react-photo-gallery';
+import Lightbox from 'react-images';
+import Dexie from 'dexie';
+const db = new Dexie('DexieDB');
+db.version(1).stores({
+  DataSave: "++id, src, width, height, alt, keys",
+});
 const styles = theme => ({
     root:{
-        paddingTop: theme.spacing.unit * 2,
-        paddingBottom: theme.spacing.unit * 2,
+        paddingTop: theme.spacing(2) ,
+        paddingBottom: theme.spacing(2) ,
     }
     
 });
-const IMAGES =
-[{
-        src: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 174,
-        caption: "After Rain (Jeshu John - designerspics.com)"
-},
-{
-        src: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212,
-        tags: [{value: "Ocean", title: "Ocean"}, {value: "People", title: "People"}],
-        caption: "Boats (Jeshu John - designerspics.com)"
-},
- 
-{
-        src: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg",
-        thumbnail: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212
-}]
+
+const photos = [
+  
+];
+
 class index extends Component {
+  
+  constructor(props) {
+    super(props)
+    this.closeLightbox = this.closeLightbox.bind(this);
+    this.openLightbox = this.openLightbox.bind(this);
+    this.gotoNext = this.gotoNext.bind(this);
+    this.gotoPrevious = this.gotoPrevious.bind(this);
+    this.state = {
+      files: [],
+      currentImage: 0,
+      photo: [],
+    }
+    // db.DataSave.clear()
+    db.DataSave.toArray().then(
+      (index)=>{
+        setTimeout(() => {
+          this.setState({photo: index})
+        });
+      }
+    )
+    
+   
+  }
+  getFiles(files){
+    
+    files.map((index,value)=>{
+      let img = new Image();
+      img.src = index.base64;
+      
+      
+      img.onload = () =>{
+        let content = {
+          src: index.base64 ,
+          width: img.width,
+          height: img.height,
+          alt: index.name,
+          keys: Date.now(),
+        }
+        db.DataSave.add(content);
+        db.DataSave.toArray().then(
+          (index)=>{
+            setTimeout(() => {
+              this.setState({photo: index})
+            });
+          }
+        )
+        
+      }
+    })
+    
+  }
+  
+  openLightbox(event, obj) {
+    this.setState({
+      currentImage: obj.index,
+      lightboxIsOpen: true,
+    });
+  }
+  closeLightbox() {
+    this.setState({
+      currentImage: 0,
+      lightboxIsOpen: false,
+    });
+  }
+  gotoPrevious() {
+    this.setState({
+      currentImage: this.state.currentImage - 1,
+    });
+  }
+  gotoNext() {
+    this.setState({
+      currentImage: this.state.currentImage + 1,
+    });
+  }
   render() {
     const { classes } = this.props
     return (
       <div className={classes.root}>
-         <Gallery images={IMAGES}/>
+        <Gallery photos={this.state.photo} onClick={this.openLightbox} />
+        
+        <Lightbox images={this.state.photo}
+          onClose={this.closeLightbox}
+          onClickPrev={this.gotoPrevious}
+          onClickNext={this.gotoNext}
+          currentImage={this.state.currentImage}
+          isOpen={this.state.lightboxIsOpen}
+        />
+        <FileBase64
+          multiple={ true }
+          onDone={ this.getFiles.bind(this) } />
       </div>
     )
   }
