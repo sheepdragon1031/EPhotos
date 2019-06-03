@@ -187,7 +187,11 @@ class index extends Component {
 
     return (
       <div className={classes.root}>
-        
+        <p>
+          <button className="toggle-select" onClick={this.toggleSelect}>
+            toggle select all
+          </button>
+        </p>
         <Dropzone onDrop={ acceptedFiles => this.onDropHandler(acceptedFiles)}>
           {({getRootProps, getInputProps}) => (
             <section>
