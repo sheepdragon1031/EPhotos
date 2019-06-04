@@ -60,7 +60,7 @@ const SelectedImage = ({
   }
   return (
     <div
-      style={{ margin, height: photo.height, width: photo.width, ...cont }}
+      style={{ margin, height: photo.height, width: photo.width, ...cont}}
       className={!photo.selected ? "not-selected" : ""}
     >
       <Checkmark selected={photo.selected ? true : false} />

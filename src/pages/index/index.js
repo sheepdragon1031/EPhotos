@@ -58,22 +58,13 @@ class index extends Component {
     
    
   }
-  selectPhoto(event, obj) {
-    let photos = this.state.photo;
-    photos[obj.index].selected = !photos[obj.index].selected;
-    this.setState({ photo: photos });
-  }
-  toggleSelect() {
-    let photos = this.state.photo.map((photo, index) => {
-      return { ...photo, selected: !this.state.selectAll };
-    });
-    this.setState({ photo: photos, selectAll: !this.state.selectAll });
-  }
-  onSortEnd = ({ oldIndex, newIndex }) => {
+  
+  onSortEnd = ({ oldIndex, newIndex, e}) => {
     if(oldIndex === newIndex){
-      this.openLightbox(newIndex)
+
+      // this.openLightbox(newIndex)
     }
-    else{
+    if(oldIndex !== newIndex){
       const oldIndexs =  this.state.photo[oldIndex]
       const newIndexs =  this.state.photo[newIndex]
 
@@ -151,17 +142,13 @@ class index extends Component {
     });
   }
   onDropHandler(files) { 
-    console.log('Drop');
     files.map((index,value) =>{
-      console.log(index)
       const reader = new FileReader();
       const img = new Image();
       reader.onload = (event) => {
-        console.log('reader');
         index.base64 = event.target.result;
         img.src = index.base64;
         img.onload = () => {
-          console.log('img');
           let content = {
             src: index.base64 ,
             width: img.width,
@@ -181,22 +168,34 @@ class index extends Component {
       reader.readAsDataURL(index);
     })     
   }
+  selectPhoto(event, obj) {
+    let photos = this.state.photo;
+    photos[obj.index].selected = !photos[obj.index].selected;
+    this.setState({ photo: photos });
+  }
+  toggleSelect() {
+    let photos = this.state.photo.map((photo, index) => {
+      return { ...photo, selected: !this.state.selectAll };
+    });
+    this.setState({ photo: photos, selectAll: !this.state.selectAll });
+  }
+
   render() {
     const { classes } = this.props
     const SortablePhoto = SortableElement(item => <DropPhoto {...item} />);
     const SortableGallery = SortableContainer(({ items }) => (
-      <Gallery photos={items} renderImage={SortablePhoto}  />
+      <Gallery photos={items} renderImage={SortablePhoto} />
     ));
-    const SelectMode = () =>{
-      if(!this.state.selectMode){
-        return (<SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />)
-      }
-      else{
-        // onClick={this.selectPhoto}
-        return (<Gallery
-          photos={this.state.photo}  renderImage={SelectPhoto} />)
-      }
-    }
+
+    // const SelectMode = () =>{
+    //   if(!this.state.selectMode){
+    //     return (<SortableGallery items={this.state.photo} onClick={this.test} onSortEnd={this.onSortEnd}  axis={"xy"} />)
+    //   }
+    //   else{
+    //     return (<Gallery
+    //       photos={this.state.photo}  renderImage={SelectPhoto}  onClick={this.selectPhoto} />)
+    //   }
+    // }
     return (
       <div className={classes.root}>
         <p>
@@ -226,7 +225,8 @@ class index extends Component {
             </section>
           )}
         </Dropzone>
-        <SelectMode/>
+        <SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />
+        
       </div>
     )
   }
