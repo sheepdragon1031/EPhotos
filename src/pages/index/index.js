@@ -6,7 +6,9 @@ import Lightbox from 'react-images';
 import Dexie from 'dexie';
 import Dropzone from 'react-dropzone'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
-import Photo from "./photo";
+import DropPhoto from "./photo";
+import SelectPhoto from "./selectedImage";
+
 import arrayMove from "array-move";
 import SelectedImage from "./selectedImage";
 
@@ -43,6 +45,7 @@ class index extends Component {
       currentImage: 0,
       photo: [],
       selectAll: false,
+      selectMode: false,
     }
     // db.DataSave.clear()
     db.DataSave.toArray().then(
@@ -56,15 +59,15 @@ class index extends Component {
    
   }
   selectPhoto(event, obj) {
-    let photos = this.state.photos;
+    let photos = this.state.photo;
     photos[obj.index].selected = !photos[obj.index].selected;
-    this.setState({ photos: photos });
+    this.setState({ photo: photos });
   }
   toggleSelect() {
-    let photos = this.state.photos.map((photo, index) => {
+    let photos = this.state.photo.map((photo, index) => {
       return { ...photo, selected: !this.state.selectAll };
     });
-    this.setState({ photos: photos, selectAll: !this.state.selectAll });
+    this.setState({ photo: photos, selectAll: !this.state.selectAll });
   }
   onSortEnd = ({ oldIndex, newIndex }) => {
     if(oldIndex === newIndex){
@@ -180,11 +183,20 @@ class index extends Component {
   }
   render() {
     const { classes } = this.props
-    const SortablePhoto = SortableElement(item => <Photo {...item} />);
+    const SortablePhoto = SortableElement(item => <DropPhoto {...item} />);
     const SortableGallery = SortableContainer(({ items }) => (
       <Gallery photos={items} renderImage={SortablePhoto}  />
     ));
-
+    const SelectMode = () =>{
+      if(!this.state.selectMode){
+        return (<SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />)
+      }
+      else{
+        // onClick={this.selectPhoto}
+        return (<Gallery
+          photos={this.state.photo}  renderImage={SelectPhoto} />)
+      }
+    }
     return (
       <div className={classes.root}>
         <p>
@@ -214,7 +226,7 @@ class index extends Component {
             </section>
           )}
         </Dropzone>
-        <SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />
+        <SelectMode/>
       </div>
     )
   }
