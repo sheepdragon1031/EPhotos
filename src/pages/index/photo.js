@@ -8,7 +8,7 @@ const Checkmark = ({ selected }) => (
     style={
       selected
         ? { left: ".5rem", top: ".5rem", position: "absolute", zIndex: "100" ,  width: '24px' , height: '24px' , display: 'block'}
-        : { left: ".5rem", top: ".5rem", position: "absolute", zIndex: "100" ,  width: '24px' , height: '24px' , display: 'block'}
+        : { display: 'none'}
     }
     // onClick={this.props.selectAll}
   >
@@ -55,7 +55,7 @@ const Photo = ({ index, onClick, photo, margin, direction, top, left }) => {
   selectedImgStyle.transform = `translateZ(0px) scale3d(${sx}, ${sy}, 1)`;
 
 
-  const imgStyle = { margin: margin };
+  // const imgStyle = { margin: margin };
   if (direction === "column") {
     imgStyle.position = "absolute";
     imgStyle.left = left;
@@ -64,7 +64,6 @@ const Photo = ({ index, onClick, photo, margin, direction, top, left }) => {
   const handleClick = event => {
     onClick(event, { photo, index });
   };
-  
   return (
     <div
       style={{ margin, height: photo.height, width: photo.width, ...cont,pointerEvents: 'auto' }}
@@ -72,7 +71,9 @@ const Photo = ({ index, onClick, photo, margin, direction, top, left }) => {
     >
       <Checkmark selected={photo.selected ? true : false} style={{ pointerEvents: 'auto'}} />
       <img
-        style={onClick ? { ...imgStyle, ...imgWithClick } : imgStyle,{ pointerEvents: 'nono'}}
+        style={photo.selected
+          ? { ...imgStyle, ...selectedImgStyle }
+          : { ...imgStyle }}
         {...photo}
         onClick={onClick ? handleClick : null}
         alt={photo.alt}
