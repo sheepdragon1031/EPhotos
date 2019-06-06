@@ -4,13 +4,17 @@ import FileBase64 from 'react-file-base64';
 import Gallery from 'react-photo-gallery';
 import Lightbox from 'react-images';
 import Dexie from 'dexie';
-import Dropzone from 'react-dropzone'
+import Dropzone,{useDropzone} from 'react-dropzone'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import DropPhoto from "./photo";
 import SelectPhoto from "./selectedImage";
 
 import arrayMove from "array-move";
 import SelectedImage from "./selectedImage";
+
+
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 const db = new Dexie('DexieDB');
@@ -40,17 +44,22 @@ class index extends Component {
     this.gotoPrevious = this.gotoPrevious.bind(this);
     // this.selectPhoto = this.selectPhoto.bind(this);
     this.toggleSelect = this.toggleSelect.bind(this);
+    this.deleteSelect = this.deleteSelect.bind(this);
+    this.onUploadImg = this.onUploadImg.bind(this);
+    this.myRef = React.createRef();
     this.state = {
       files: [],
       currentImage: 0,
       photo: [],
       selectAll: false,
-      checkMode: 0,
+      checkMode: -1,
     }
     // db.DataSave.clear()
     db.DataSave.toArray().then(
       (index)=>{
-          this.setState({photo: index})
+          this.setState((prevState, props) => ({
+            photo: index
+          }));
       }
     )
    
@@ -64,12 +73,18 @@ class index extends Component {
         if(photos[oldIndex].opentime > Date.now() - 500){
           this.openLightbox(newIndex)
         }
-        this.setState({checkMode: 0})
+        this.setState((prevState, props) => ({
+          checkMode: -1
+        }));
+        // this.setState({checkMode: -1})
       }
       else{
         photos[oldIndex].selected = !photos[oldIndex].selected
         photos[oldIndex].opentime = Date.now()
-        this.setState({checkMode: oldIndex})
+        this.setState((prevState, props) => ({
+          checkMode: oldIndex
+        }));
+        // this.setState({checkMode: oldIndex})
       }
       // this.openLightbox(newIndex)
     }
@@ -108,20 +123,25 @@ class index extends Component {
       let img = new Image();
       img.src = index.base64;
       
-      
+      console.log(index)
       img.onload = () =>{
+        
         let content = {
           src: index.base64 ,
           width: img.width,
           height: img.height,
           alt: index.name,
           keys: Date.now(),
+          caption: index.name,
         }
         db.DataSave.add(content);
         db.DataSave.toArray().then(
           (index)=>{
             // setTimeout(() => {
-              this.setState({photo: index})
+              this.setState((prevState, props) => ({
+                photo: index
+              }));
+              // this.setState({photo: index})
             // });
           }
         )
@@ -167,12 +187,16 @@ class index extends Component {
             height: img.height,
             alt: index.name,
             keys: Date.now(),
+            caption: index.name
           }
           db.DataSave.add(content);
           db.DataSave.toArray().then(
             (index)=>{
               // setTimeout(() => {
-                this.setState({photo: index})
+                this.setState((prevState, props) => ({
+                  photo: index
+                }));
+                // this.setState({photo: index})
               // });
             })
         }
@@ -189,22 +213,39 @@ class index extends Component {
     let photos = this.state.photo.map((photo, index) => {
       return { ...photo, selected: !this.state.selectAll };
     });
-    this.setState({ photo: photos, selectAll: !this.state.selectAll });
+    this.setState((prevState, props) => ({
+      photo: photos, selectAll: !prevState.selectAll
+    }));
+    // this.setState({ photo: photos, selectAll: !this.state.selectAll });
   }
-
+  deleteSelect(){
+    const array = [...this.state.photo];
+    let i = 0
+    this.state.photo.map((photo, index) => {
+      if(photo.selected){        
+        db.DataSave.delete(photo.id)
+        array.splice((index - i++) , 1)
+        // this.setState({photo: array})
+        this.setState((prevState, props) => ({
+          photo: array
+        }));
+      }
+    });
+  }
+  onUploadImg(){
+    const node = this.myRef.current;
+    console.log(node.onClick())
+    
+  }
   render() {
     const { classes } = this.props
     const SortablePhoto = SortableElement(item => <DropPhoto {...item} />);
     const SortableGallery = SortableContainer(({ items }) => (
       <Gallery photos={items} renderImage={SortablePhoto} />
     ));
+    // const { getRootProps ,getInputProps} = useDropzone();
     return (
       <div className={classes.root}>
-        <p>
-          <button className="toggle-select" onClick={this.toggleSelect}>
-            toggle select all
-          </button>
-        </p>
         <Lightbox images={this.state.photo}
                   onClose={this.closeLightbox}
                   onClickPrev={this.gotoPrevious}
@@ -212,23 +253,32 @@ class index extends Component {
                   currentImage={this.state.currentImage}
                   isOpen={this.state.lightboxIsOpen}
                 />
+        {/* <FileBase64 
+                  multiple={ true }
+                  onDone={ this.getFiles.bind(this) } ref={this.myRef}/> */}
         <Dropzone onDrop={ acceptedFiles => this.onDropHandler(acceptedFiles)}>
           {({getRootProps, getInputProps}) => (
+         
             <section>
-              <div {...getRootProps()}>
-                
-                
-                
-                <FileBase64
-                  multiple={ true }
-                  onDone={ this.getFiles.bind(this) } />
-              
+              <p>
+                  <IconButton aria-label="cloud_upload" className={classes.margin} {...getRootProps()}>
+                    <i  fontSize="large" className="material-icons">cloud_upload</i>
+                  </IconButton>
+                  <IconButton aria-label="done_all" className={classes.margin} onClick={this.toggleSelect}>
+                    <i  fontSize="large" className="material-icons">done_all</i>
+                  </IconButton>
+                  <IconButton aria-label="Delete" className={classes.margin} onClick={this.deleteSelect}>
+                    <DeleteIcon fontSize="default" />
+                  </IconButton>
+              </p>
+              <div {...getRootProps()}>    
                 <input {...getInputProps()} />
               </div>
+              <SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />
             </section>
           )}
         </Dropzone>
-        <SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />
+        
         
       </div>
     )
