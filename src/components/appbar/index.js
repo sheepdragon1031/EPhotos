@@ -33,6 +33,7 @@ const styles = theme => ({
     },
     appbar:{
         background: grey[300],
+        boxShadow: 'none'
     }
 });
 
