@@ -27,7 +27,7 @@ import Button from '@material-ui/core/Button';
 
 const db = new Dexie('DexieDB');
 db.version(1).stores({
-  DataSave: "++id, src, width, height, alt, keys",
+  DataSave: "++id, src, width, height, alt, keys, content",
 });
 
 const drawerWidth = 240;
