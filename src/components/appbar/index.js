@@ -47,11 +47,11 @@ const styles = theme => ({
         background: grey[100],
     },
     lightModeAppbar:{
-        background: grey[200],
+        background: grey[300],
         boxShadow: `0rem 0rem .2rem .1rem ${grey[500]}`,
     },
     darkModeAppbar:{
-        background: grey[800],
+        background: '#2e2e2e',
         boxShadow: `0rem 0rem .2rem .1rem ${grey[50]}`,
     },
     darkModeIcon:{
