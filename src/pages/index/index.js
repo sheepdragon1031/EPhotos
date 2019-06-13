@@ -24,6 +24,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
+import grey from '@material-ui/core/colors/grey';
 
 const db = new Dexie('DexieDB');
 db.version(1).stores({
@@ -36,6 +37,13 @@ const styles = theme => ({
     root:{
         paddingTop: theme.spacing(2) ,
         paddingBottom: theme.spacing(2) ,
+        minHeight: `calc( 100vh - 6.5rem)`,
+    },
+    lightModeRoot:{
+      background: grey[100],
+    },
+    darkModeRoot:{
+      background: grey[900],
     },
     textField: {
       width: '100%',
@@ -52,7 +60,7 @@ const styles = theme => ({
     },
     contentShift: {
       // marginRight: drawerWidth,
-      width: `calc(100% - ${drawerWidth} - 2rem)`,
+      width: `calc(100% - ${drawerWidth} )`,
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
@@ -83,10 +91,20 @@ const styles = theme => ({
       fontSize: '0.75rem',
     },
     dropArea:{
+        margin: '0 1rem',
         '&:focus' : {
           outline: 'none',
         }
-    }
+    },
+    lightModeDropArea:{
+      border: `${grey[800]} 0.1rem dashed`,
+    },
+    darkModeDropArea:{
+      border: `${grey[100]} 0.1rem dashed`,
+    },
+    darkModeIcon:{
+      color: grey[100],
+  },
 });
 
 class index extends Component {
@@ -107,8 +125,9 @@ class index extends Component {
       photo: [],
       selectAll: false,
       checkMode: -1,
-      info: false
+      info: false,
     }
+   
     // db.DataSave.clear()
     db.DataSave.toArray().then(
       (index)=>{
@@ -117,7 +136,6 @@ class index extends Component {
           }));
       }
     )
-   
   }
   updateContent = (that, photo, index) =>{
     const newArr = [...this.state.photo];
@@ -299,9 +317,10 @@ class index extends Component {
       }));
       // setOpen(false);
     }
+  
     // const { getRootProps ,getInputProps} = useDropzone();
     return (
-      <div className={classes.root}>
+      <div className={`${this.props.darkMode? classes.darkModeRoot: classes.lightModeRoot} ${classes.root}`}>
         <Lightbox images={this.state.photo}
                   onClose={this.closeLightbox}
                   onClickPrev={this.gotoPrevious}
@@ -317,17 +336,17 @@ class index extends Component {
               <input {...getInputProps()} />
               <div {...getRootProps({
                       onClick: event => event.stopPropagation()
-                    })} className={classes.dropArea}>
-                  <IconButton aria-label="cloud_upload" className={classes.margin} {...getRootProps()}>
+                    })} className={`${this.props.darkMode? classes.darkModeDropArea: classes.lightModeDropArea} ${classes.dropArea}`}>
+                  <IconButton aria-label="cloud_upload" className={`${this.props.darkMode? classes.darkModeIcon: ''}`} {...getRootProps()}>
                     <Icon  fontSize="large" className="material-icons">cloud_upload</Icon>
                   </IconButton>
-                  <IconButton aria-label="done_all" className={classes.margin} onClick={this.toggleSelect}>
+                  <IconButton aria-label="done_all" className={`${this.props.darkMode? classes.darkModeIcon: ''}`} onClick={this.toggleSelect}>
                     <Icon  fontSize="large" className="material-icons">done_all</Icon>
                   </IconButton>
-                  <IconButton aria-label="Delete" className={classes.margin} onClick={this.deleteSelect}>
+                  <IconButton aria-label="Delete" className={`${this.props.darkMode? classes.darkModeIcon: ''}`} onClick={this.deleteSelect}>
                     <DeleteIcon fontSize="large" />
                   </IconButton>
-                  <IconButton aria-label="Open drawer" className={classes.margin}
+                  <IconButton aria-label="Open drawer" className={`${this.props.darkMode? classes.darkModeIcon: ''}`}
                    onClick={handleDrawerOpen} >
                     <Icon  fontSize="large" className="material-icons">info</Icon>
                   </IconButton>

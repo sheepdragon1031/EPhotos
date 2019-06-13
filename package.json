@@ -12,8 +12,6 @@
     "react-dropzone": "^10.1.5",
     "react-images": "^0.5.19",
     "react-photo-gallery": "^7.0.2",
-    "react-router": "^5.0.0",
-    "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1",
     "react-sortable-hoc": "^1.9.1"
   },
