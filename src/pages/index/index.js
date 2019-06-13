@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component , useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Gallery from 'react-photo-gallery';
 import Lightbox from 'react-images';
@@ -31,7 +31,7 @@ db.version(1).stores({
   DataSave: "++id, src, width, height, alt, keys, content",
 });
 
-const drawerWidth = '15rem';
+const drawerWidth = '20rem';
 
 const styles = theme => ({
     root:{
@@ -60,7 +60,7 @@ const styles = theme => ({
     },
     contentShift: {
       // marginRight: drawerWidth,
-      width: `calc(100% - ${drawerWidth} )`,
+      width: `calc(100% - ${drawerWidth } + 5rem )`,
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
@@ -104,12 +104,22 @@ const styles = theme => ({
     },
     darkModeIcon:{
       color: grey[100],
+      position: 'relative',
   },
 });
+let DataPhotos  = [];
+db.DataSave.toArray().then(
+  (index)=>{
+     
+      DataPhotos = index;
+  }
+)
 
 class index extends Component {
   
   constructor(props) {
+    
+
     super(props)
     this.closeLightbox = this.closeLightbox.bind(this);
     this.openLightbox = this.openLightbox.bind(this);
@@ -131,6 +141,7 @@ class index extends Component {
     // db.DataSave.clear()
     db.DataSave.toArray().then(
       (index)=>{
+         
           this.setState((prevState, props) => ({
             photo: index
           }));
@@ -138,18 +149,21 @@ class index extends Component {
     )
   }
   updateContent = (that, photo, index) =>{
-    const newArr = [...this.state.photo];
-    newArr[index].content =  that.target.value;
+    const newArr = [...DataPhotos];
+    newArr[index].content =  that.currentTarget.value;
+    DataPhotos = newArr;
     this.setState((prevState, props) => ({
       photo: newArr
     }));
+
     db.DataSave.update(photo.id,{
       content: that.target.value,
     })
   }
   updateName = (that, photo, index) =>{
-    const newArr = [...this.state.photo];
+    const newArr = [...DataPhotos];
     newArr[index].alt =  that.target.value;
+    DataPhotos = newArr;
     this.setState((prevState, props) => ({
       photo: newArr
     }));
@@ -159,7 +173,7 @@ class index extends Component {
   }
   onSortEnd = ({ oldIndex, newIndex, e}) => {
     if(oldIndex === newIndex){
-      let photos = this.state.photo
+      let photos = DataPhotos
       if(this.state.checkMode === oldIndex){
         photos[oldIndex].selected = false
         if(photos[oldIndex].opentime > Date.now() - 500){
@@ -178,11 +192,12 @@ class index extends Component {
       }
     }
     if(oldIndex !== newIndex){
-      let oldIndexs =  this.state.photo[oldIndex]
-      let newIndexs =  this.state.photo[newIndex]
-
+      let oldIndexs =  DataPhotos[oldIndex]
+      let newIndexs =  DataPhotos[newIndex]
+      DataPhotos = arrayMove(DataPhotos, oldIndex, newIndex)
+      
       this.setState(({ photo }) => ({
-        photo: arrayMove(photo, oldIndex, newIndex)
+        photo: arrayMove(photo, oldIndex, newIndex),
       }),()=>{
 
         db.DataSave.update(oldIndexs.id,{
@@ -252,6 +267,7 @@ class index extends Component {
           db.DataSave.add(content);
           db.DataSave.toArray().then(
             (index)=>{
+              DataPhotos = index
                 this.setState((prevState, props) => ({
                   photo: index
                 }));
@@ -265,12 +281,12 @@ class index extends Component {
     })     
   }
   // selectPhoto(event, obj) {
-  //   let photos = this.state.photo;
+  //   let photos = DataPhotos;
   //   photos[obj.index].selected = !photos[obj.index].selected;
   //   this.setState({ photo: photos });
   // }
   toggleSelect() {
-    let photos = this.state.photo.map((photo, index) => {
+    let photos = DataPhotos.map((photo, index) => {
       return { ...photo, selected: !this.state.selectAll };
     });
     this.setState((prevState, props) => ({
@@ -278,12 +294,12 @@ class index extends Component {
     }));
   }
   deleteSelect(){
-    const array = [...this.state.photo];
+    const array = [...DataPhotos];
     let i = 0
-    this.state.photo.map((photo, index) => {
+    DataPhotos.map((photo, index) => {
       if(photo.selected){        
         db.DataSave.delete(photo.id)
-        array.splice((index - i++) , 1)
+        DataPhotos.splice((index - i++) , 1)
         this.setState((prevState, props) => ({
           photo: array
         }));
@@ -311,7 +327,7 @@ class index extends Component {
   
     return (
       <div className={`${this.props.darkMode? classes.darkModeRoot: classes.lightModeRoot} ${classes.root}`}>
-        <Lightbox images={this.state.photo}
+        <Lightbox images={DataPhotos}
                   onClose={this.closeLightbox}
                   onClickPrev={this.gotoPrevious}
                   onClickNext={this.gotoNext}
@@ -352,7 +368,7 @@ class index extends Component {
 
               <main className={this.state.info?`${classes.content} ${classes.contentShift}`:classes.content}>
                 <div className={classes.toolbar}>
-                  <SortableGallery items={this.state.photo} onSortEnd={this.onSortEnd}  axis={"xy"} />
+                  <SortableGallery items={DataPhotos} onSortEnd={this.onSortEnd}  axis={"xy"} />
                 </div>
               </main>              
               <Drawer
@@ -365,7 +381,7 @@ class index extends Component {
                   </div>
                   <Divider />
                   <List>
-                    {this.state.photo.map((index,value) =>{
+                    {DataPhotos.map((index,value) =>{
                       if(index.selected){
                         return (
                         <ListItem key={`list${value}`}>
