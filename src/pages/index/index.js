@@ -30,7 +30,7 @@ db.version(1).stores({
   DataSave: "++id, src, width, height, alt, keys, content",
 });
 
-const drawerWidth = 240;
+const drawerWidth = '15rem';
 
 const styles = theme => ({
     root:{
@@ -52,7 +52,7 @@ const styles = theme => ({
     },
     contentShift: {
       // marginRight: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px - 2rem)`,
+      width: `calc(100% - ${drawerWidth} - 2rem)`,
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
@@ -81,6 +81,11 @@ const styles = theme => ({
       width: 'calc( 100% + 1rem)',
       marginLeft: '-.5rem',
       fontSize: '0.75rem',
+    },
+    dropArea:{
+        '&:focus' : {
+          outline: 'none',
+        }
     }
 });
 
@@ -304,12 +309,15 @@ class index extends Component {
                   currentImage={this.state.currentImage}
                   isOpen={this.state.lightboxIsOpen}
                 />
-        <Dropzone onDrop={ acceptedFiles => this.onDropHandler(acceptedFiles)}>
+        <Dropzone onDrop={ acceptedFiles => this.onDropHandler(acceptedFiles)} >
           {({getRootProps, getInputProps}) => (
-         
-            <section {...getRootProps()}>
+           
+            <section >  
+              <div  >
               <input {...getInputProps()} />
-              <div>
+              <div {...getRootProps({
+                      onClick: event => event.stopPropagation()
+                    })} className={classes.dropArea}>
                   <IconButton aria-label="cloud_upload" className={classes.margin} {...getRootProps()}>
                     <Icon  fontSize="large" className="material-icons">cloud_upload</Icon>
                   </IconButton>
@@ -364,7 +372,9 @@ class index extends Component {
                     })}
                   </List>
               </Drawer>
+              </div>
             </section>
+           
           )}
         </Dropzone>
         
