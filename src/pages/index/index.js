@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Gallery from 'react-photo-gallery';
 import Lightbox from 'react-images';
 import Dexie from 'dexie';
@@ -25,6 +24,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import grey from '@material-ui/core/colors/grey';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const db = new Dexie('DexieDB');
 db.version(1).stores({
@@ -168,7 +168,6 @@ class index extends Component {
         this.setState((prevState, props) => ({
           checkMode: -1
         }));
-        // this.setState({checkMode: -1})
       }
       else{
         photos[oldIndex].selected = !photos[oldIndex].selected
@@ -176,9 +175,7 @@ class index extends Component {
         this.setState((prevState, props) => ({
           checkMode: oldIndex
         }));
-        // this.setState({checkMode: oldIndex})
       }
-      // this.openLightbox(newIndex)
     }
     if(oldIndex !== newIndex){
       let oldIndexs =  this.state.photo[oldIndex]
@@ -255,12 +252,10 @@ class index extends Component {
           db.DataSave.add(content);
           db.DataSave.toArray().then(
             (index)=>{
-              // setTimeout(() => {
                 this.setState((prevState, props) => ({
                   photo: index
                 }));
-                // this.setState({photo: index})
-              // });
+              
             })
         }
         
@@ -281,7 +276,6 @@ class index extends Component {
     this.setState((prevState, props) => ({
       photo: photos, selectAll: !prevState.selectAll
     }));
-    // this.setState({ photo: photos, selectAll: !this.state.selectAll });
   }
   deleteSelect(){
     const array = [...this.state.photo];
@@ -290,7 +284,6 @@ class index extends Component {
       if(photo.selected){        
         db.DataSave.delete(photo.id)
         array.splice((index - i++) , 1)
-        // this.setState({photo: array})
         this.setState((prevState, props) => ({
           photo: array
         }));
@@ -309,16 +302,13 @@ class index extends Component {
       this.setState((prevState, props) => ({
         info: !prevState.info
       }));
-      // setOpen(false);
     }
     const handleDrawerClose = () =>{
       this.setState((prevState, props) => ({
         info: false
       }));
-      // setOpen(false);
     }
   
-    // const { getRootProps ,getInputProps} = useDropzone();
     return (
       <div className={`${this.props.darkMode? classes.darkModeRoot: classes.lightModeRoot} ${classes.root}`}>
         <Lightbox images={this.state.photo}
@@ -338,17 +328,25 @@ class index extends Component {
                       onClick: event => event.stopPropagation()
                     })} className={`${this.props.darkMode? classes.darkModeDropArea: classes.lightModeDropArea} ${classes.dropArea}`}>
                   <IconButton aria-label="cloud_upload" className={`${this.props.darkMode? classes.darkModeIcon: ''}`} {...getRootProps()}>
-                    <Icon  fontSize="large" className="material-icons">cloud_upload</Icon>
+                    <Tooltip title="Upload" placement="top">
+                      <Icon  fontSize="large" className="material-icons">cloud_upload</Icon>
+                    </Tooltip>
                   </IconButton>
                   <IconButton aria-label="done_all" className={`${this.props.darkMode? classes.darkModeIcon: ''}`} onClick={this.toggleSelect}>
-                    <Icon  fontSize="large" className="material-icons">done_all</Icon>
+                    <Tooltip title="Select all" placement="top">
+                      <Icon  fontSize="large" className="material-icons">done_all</Icon>
+                    </Tooltip>
                   </IconButton>
                   <IconButton aria-label="Delete" className={`${this.props.darkMode? classes.darkModeIcon: ''}`} onClick={this.deleteSelect}>
-                    <DeleteIcon fontSize="large" />
+                    <Tooltip title="Delete" placement="top">
+                      <DeleteIcon fontSize="large" />
+                    </Tooltip>
                   </IconButton>
                   <IconButton aria-label="Open drawer" className={`${this.props.darkMode? classes.darkModeIcon: ''}`}
                    onClick={handleDrawerOpen} >
-                    <Icon  fontSize="large" className="material-icons">info</Icon>
+                     <Tooltip title="Info" placement="top">
+                      <Icon  fontSize="large" className="material-icons">info</Icon>
+                     </Tooltip>
                   </IconButton>
               </div>
 

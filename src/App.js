@@ -12,9 +12,9 @@ class App extends Component {
   constructor(props) {
     super(props)
     const DataRGB = localStorage.getItem('DataRGB') == null ?  localStorage.setItem('DataRGB', false):
-    localStorage.getItem('DataRGB') == 'false' ? false : true;
+    localStorage.getItem('DataRGB') === 'false' ? false : true;
     const DataDarkMode = localStorage.getItem('DataDarkMode') == null ?  localStorage.setItem('DataDarkMode', false):
-    localStorage.getItem('DataDarkMode') == 'false' ? false : true;
+    localStorage.getItem('DataDarkMode') === 'false' ? false : true;
    
     this.state = {
       RGB: DataRGB,
@@ -23,8 +23,6 @@ class App extends Component {
 
   }
   changeMode(){
-    const DataDarkMode = localStorage.getItem('DataDarkMode') == null ?  localStorage.setItem('DataDarkMode', false):
-    localStorage.getItem('DataDarkMode') == 'false' ? false : true;
     this.setState((prevState, props) => ({
       darkMode: !prevState.darkMode
     }));
@@ -32,8 +30,6 @@ class App extends Component {
    
   }
   changeRGB(){
-    const DataRGB = localStorage.getItem('DataRGB') == null ?  localStorage.setItem('DataRGB', false):
-    localStorage.getItem('DataRGB') == 'false' ? false : true;
     this.setState((prevState, props) => ({
       RGB: !prevState.RGB
     }));
@@ -43,7 +39,6 @@ class App extends Component {
   }
   render() {
     const { RGB, darkMode } = this.state;
-    console.log(RGB)
     return (
       <div className="App">
         <Appbar darkMode={darkMode}  RGB={RGB} 

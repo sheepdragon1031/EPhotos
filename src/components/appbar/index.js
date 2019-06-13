@@ -3,14 +3,14 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-// import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 
 import pink from '@material-ui/core/colors/pink';
 import purple from '@material-ui/core/colors/purple';
 import grey from '@material-ui/core/colors/grey';
-// import RGBS from 'RGBS.js'
+import Tooltip from '@material-ui/core/Tooltip';
+
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -118,11 +118,9 @@ class App extends Component {
        
     }
     changeMode(){
-       
         this.props.changeMode()
     }
     changeRGB(){
-      
         this.props.changeRGB()
     }
   render() {
@@ -139,12 +137,16 @@ class App extends Component {
                         <span className={` ${classes.pink}`}>E</span>
                         <span className={` ${classes.purple}`}>Photos</span>
                     </Typography>
-                    <IconButton aria-label="gamepad" className={`${this.props.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeRGB()}>
-                        <Icon  fontSize="default" className="material-icons">gamepad</Icon>
-                    </IconButton>
-                    <IconButton aria-label="brightness_4" className={`${this.props.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeMode()} >
-                        <Icon  fontSize="default" className="material-icons">brightness_4</Icon>
-                    </IconButton>
+                    <Tooltip title="Gaming Mode" placement="left">
+                        <IconButton aria-label="gamepad" className={`${this.props.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeRGB()}>
+                            <Icon  fontSize="default"  className="material-icons">gamepad</Icon>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Drak Mode" placement="left">
+                        <IconButton aria-label="brightness_4" className={`${this.props.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeMode()} >
+                            <Icon  fontSize="default" className="material-icons">brightness_4</Icon>
+                        </IconButton>
+                    </Tooltip>
                 </Toolbar>
             </AppBar>
             <div className={`${this.props.RGB?classes.RGB:this.props.darkMode?classes.DarkBar:classes.LightBar}`}>

@@ -1,7 +1,5 @@
 import React from "react";
-// import PropTypes from "prop-types";
 
-// const imgWithClick = { cursor: "pointer" };
 
 const Checkmark = ({ selected }) => (
   <div
@@ -9,9 +7,7 @@ const Checkmark = ({ selected }) => (
       selected
         ? { left: ".5rem", top: ".5rem", position: "absolute", zIndex: "100" ,  width: '24px' , height: '24px' , display: 'block'}
         : { display: 'none'}
-    }
-    // onClick={this.props.selectAll}
-  >
+    }  >
     <svg
       style={{ fill: "white", position: "absolute", left: "0rem", top: "0rem" }}
       width="24px"
@@ -20,7 +16,6 @@ const Checkmark = ({ selected }) => (
       <circle cx="12.5" cy="12.2" r="8.292" />
     </svg>
     <svg
-      // style={[selected? {fill: "#06befa"}: {fill: "#9E9E9E"}], {position: "absolute" , left: "0rem", top: "0rem"}]} 
       style={
         selected ?  
           {fill: "#06befa", position: "absolute" , left: "0rem", top: "0rem" } :
