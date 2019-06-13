@@ -307,10 +307,8 @@ class index extends Component {
         <Dropzone onDrop={ acceptedFiles => this.onDropHandler(acceptedFiles)}>
           {({getRootProps, getInputProps}) => (
          
-            <section>
-              <div {...getRootProps()}>    
-                <input {...getInputProps()} />
-              </div>
+            <section {...getRootProps()}>
+              <input {...getInputProps()} />
               <div>
                   <IconButton aria-label="cloud_upload" className={classes.margin} {...getRootProps()}>
                     <Icon  fontSize="large" className="material-icons">cloud_upload</Icon>
