@@ -112,20 +112,17 @@ class App extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            RGB: this.props.RGB,
-            darkMode: this.props.darkMode,
+            RGB: this.props.RGB ,
+            darkMode: this.props.darkMode ,
         }
+       
     }
     changeMode(){
-        this.setState((prevState, props) => ({
-          darkMode: !prevState.darkMode
-        }));
+       
         this.props.changeMode()
     }
     changeRGB(){
-        this.setState((prevState, props) => ({
-          RGB: !prevState.RGB
-        }));
+      
         this.props.changeRGB()
     }
   render() {
@@ -133,24 +130,24 @@ class App extends Component {
    
     return (
         <div className={classes.root}>
-            <AppBar className={`${this.state.darkMode?classes.darkModeAppbar:classes.lightModeAppbar} ${classes.AppBar}`} position="static" >
+            <AppBar className={`${this.props.darkMode?classes.darkModeAppbar:classes.lightModeAppbar} ${classes.AppBar}`} position="static" >
                 <Toolbar>
                     {/* <IconButton edge="start" className={classes.menuButton} color="secondary" aria-label="Menu">
                         <MenuIcon />
                     </IconButton> */}
-                    <Typography variant="h6" className={`${this.state.darkMode?classes.darkModeTitle:classes.lightModeTitle} ${classes.title}`}>
+                    <Typography variant="h6" className={`${this.props.darkMode?classes.darkModeTitle:classes.lightModeTitle} ${classes.title}`}>
                         <span className={` ${classes.pink}`}>E</span>
                         <span className={` ${classes.purple}`}>Photos</span>
                     </Typography>
-                    <IconButton aria-label="gamepad" className={`${this.state.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeRGB()}>
+                    <IconButton aria-label="gamepad" className={`${this.props.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeRGB()}>
                         <Icon  fontSize="default" className="material-icons">gamepad</Icon>
                     </IconButton>
-                    <IconButton aria-label="brightness_4" className={`${this.state.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeMode()} >
+                    <IconButton aria-label="brightness_4" className={`${this.props.darkMode?classes.darkModeIcon:''}`} onClick={() => this.changeMode()} >
                         <Icon  fontSize="default" className="material-icons">brightness_4</Icon>
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <div className={`${this.state.RGB?classes.RGB:this.state.darkMode?classes.DarkBar:classes.LightBar}`}>
+            <div className={`${this.props.RGB?classes.RGB:this.props.darkMode?classes.DarkBar:classes.LightBar}`}>
 
             </div>
         </div>

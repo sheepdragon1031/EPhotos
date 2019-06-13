@@ -11,32 +11,39 @@ class App extends Component {
   
   constructor(props) {
     super(props)
-    
-    this.state = {
-      RGB: false ,//
-      darkMode: false,//
-    }
+    const DataRGB = localStorage.getItem('DataRGB') == null ?  localStorage.setItem('DataRGB', false):
+    localStorage.getItem('DataRGB') == 'false' ? false : true;
+    const DataDarkMode = localStorage.getItem('DataDarkMode') == null ?  localStorage.setItem('DataDarkMode', false):
+    localStorage.getItem('DataDarkMode') == 'false' ? false : true;
    
-    // cookies.set('drakMode', this.state.darkMode, { path: '/' });
+    this.state = {
+      RGB: DataRGB,
+      darkMode: DataDarkMode,
+    }
+
   }
   changeMode(){
+    const DataDarkMode = localStorage.getItem('DataDarkMode') == null ?  localStorage.setItem('DataDarkMode', false):
+    localStorage.getItem('DataDarkMode') == 'false' ? false : true;
     this.setState((prevState, props) => ({
       darkMode: !prevState.darkMode
-    }),()=>{
-      // cookies.set('drakMode', this.state.darkMode, { path: '/' });
-    });
-    
+    }));
+    localStorage.setItem('DataDarkMode', !this.state.darkMode);
+   
   }
   changeRGB(){
+    const DataRGB = localStorage.getItem('DataRGB') == null ?  localStorage.setItem('DataRGB', false):
+    localStorage.getItem('DataRGB') == 'false' ? false : true;
     this.setState((prevState, props) => ({
       RGB: !prevState.RGB
-    }),()=>{
-      console.log(this.state.RGB)
-    });
-    
+    }));
+   
+    localStorage.setItem('DataRGB', !this.state.RGB);
+   
   }
   render() {
     const { RGB, darkMode } = this.state;
+    console.log(RGB)
     return (
       <div className="App">
         <Appbar darkMode={darkMode}  RGB={RGB} 

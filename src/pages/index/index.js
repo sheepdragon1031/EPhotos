@@ -397,7 +397,6 @@ class index extends Component {
           )}
         </Dropzone>
         
-        
       </div>
     )
   }
