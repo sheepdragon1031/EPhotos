@@ -132,7 +132,6 @@ class index extends Component {
     this.state = {
       files: [],
       currentImage: 0,
-      photo: [],
       selectAll: false,
       checkMode: -1,
       info: false,
@@ -150,7 +149,7 @@ class index extends Component {
   }
   updateContent = (that, photo, index) =>{
     const newArr = [...DataPhotos];
-    newArr[index].content =  that.currentTarget.value;
+    newArr[index].content =  that.target.value;
     DataPhotos = newArr;
     this.setState((prevState, props) => ({
       photo: newArr
@@ -172,11 +171,12 @@ class index extends Component {
     })
   }
   onSortEnd = ({ oldIndex, newIndex, e}) => {
+    const sec = 700
     if(oldIndex === newIndex){
       let photos = DataPhotos
       if(this.state.checkMode === oldIndex){
         photos[oldIndex].selected = false
-        if(photos[oldIndex].opentime > Date.now() - 500){
+        if(photos[oldIndex].opentime > Date.now() - sec){
           this.openLightbox(newIndex)
         }
         this.setState((prevState, props) => ({
@@ -196,19 +196,21 @@ class index extends Component {
       let newIndexs =  DataPhotos[newIndex]
       DataPhotos = arrayMove(DataPhotos, oldIndex, newIndex)
       
-      this.setState(({ photo }) => ({
-        photo: arrayMove(photo, oldIndex, newIndex),
-      }),()=>{
+      // this.setState(({ photo }) => ({
+      //   photo: arrayMove(photo, oldIndex, newIndex),
+      // }),()=>{
 
-        db.DataSave.update(oldIndexs.id,{
-          src: newIndexs.src ,
-          width: newIndexs.width,
-          height: newIndexs.height,
-          alt: newIndexs.alt,
-          keys: newIndexs.key,
-          content: newIndexs.content,
-        })
-  
+        
+
+      // });
+      db.DataSave.update(oldIndexs.id,{
+        src: newIndexs.src ,
+        width: newIndexs.width,
+        height: newIndexs.height,
+        alt: newIndexs.alt,
+        keys: newIndexs.key,
+        content: newIndexs.content,
+      }).then(()=>{
         db.DataSave.update(newIndexs.id,{
           src: oldIndexs.src ,
           width: oldIndexs.width,
@@ -217,11 +219,12 @@ class index extends Component {
           keys: oldIndexs.key,
           content: oldIndexs.content,
         })
+        
 
-      });
+      })
+
       
     }
-    
 
   };
   
@@ -289,8 +292,9 @@ class index extends Component {
     let photos = DataPhotos.map((photo, index) => {
       return { ...photo, selected: !this.state.selectAll };
     });
+    DataPhotos = photos;
     this.setState((prevState, props) => ({
-      photo: photos, selectAll: !prevState.selectAll
+       selectAll: !prevState.selectAll
     }));
   }
   deleteSelect(){
@@ -370,7 +374,8 @@ class index extends Component {
                 <div className={classes.toolbar}>
                   <SortableGallery items={DataPhotos} onSortEnd={this.onSortEnd}  axis={"xy"} />
                 </div>
-              </main>              
+              </main>
+
               <Drawer
                   className={classes.drawer} variant="persistent" anchor="right" open={this.state.info}
                   classes={{paper: classes.drawerPaper,}}>
