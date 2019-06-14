@@ -175,7 +175,6 @@ class index extends Component {
     const sec = 700
     if(oldIndex === newIndex){
       let photos = DataPhotos
-      console.log(photos)
       if(this.state.checkMode === oldIndex){
         photos[oldIndex].selected = false
         if(photos[oldIndex].opentime > Date.now() - sec){
