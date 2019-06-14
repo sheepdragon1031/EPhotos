@@ -175,6 +175,7 @@ class index extends Component {
     const sec = 700
     if(oldIndex === newIndex){
       let photos = DataPhotos
+      console.log(photos)
       if(this.state.checkMode === oldIndex){
         photos[oldIndex].selected = false
         if(photos[oldIndex].opentime > Date.now() - sec){
@@ -299,18 +300,19 @@ class index extends Component {
     }));
   }
   deleteSelect(){
-    const array = [...DataPhotos];
     let i = 0
+    let DataPhotoX = [...DataPhotos];
     DataPhotos.map((photo, index) => {
-      if(photo.selected){        
+      if(photo.selected){ 
         db.DataSave.delete(photo.id)
-        DataPhotos.splice((index - i++) , 1)
-        this.setState((prevState, props) => ({
-          photo: array
-        }));
+        DataPhotoX.splice((index - i++) , 1)
       }
       return 0
     });
+    DataPhotos = DataPhotoX;
+    this.setState((prevState, props) => ({
+      checkMode: -1
+    }));
   }
   render() {
     const { classes } = this.props
