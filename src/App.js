@@ -3,10 +3,21 @@ import { withStyles } from '@material-ui/core/styles';
 import './App.css';
 import Index from './pages/index';
 import Appbar from './components/appbar';
-
 const styles = theme => ({
- 
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em'
+    },
+    '*::-webkit-scrollbar-track': {
+      '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.1)',
+      outline: '1px solid slategrey'
+    }
+  }
 })
+
 class App extends Component {
   
   constructor(props) {
@@ -37,13 +48,22 @@ class App extends Component {
     localStorage.setItem('DataRGB', !this.state.RGB);
    
   }
+  componentDidMount() {
+    if (this.scrollbar) {
+      this.scrollbar.element.addEventListener('ps-scroll-y', () =>
+        console.log('scroll-y')
+      );
+    }
+  }
   render() {
     const { RGB, darkMode } = this.state;
     return (
       <div className="App">
-        <Appbar darkMode={darkMode}  RGB={RGB} 
-          changeMode={()=>this.changeMode()} changeRGB={()=>this.changeRGB()}/>
-        <Index darkMode={darkMode}/>
+
+          <Appbar darkMode={darkMode}  RGB={RGB} 
+            changeMode={()=>this.changeMode()} changeRGB={()=>this.changeRGB()}/>
+          <Index darkMode={darkMode}/>
+        
       </div>
     )
   }

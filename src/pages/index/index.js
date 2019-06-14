@@ -92,6 +92,7 @@ const styles = theme => ({
     },
     dropArea:{
         margin: '0 1rem',
+        textAlign: 'center',
         '&:focus' : {
           outline: 'none',
         }
