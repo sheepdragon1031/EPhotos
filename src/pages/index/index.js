@@ -197,13 +197,9 @@ class index extends Component {
       let newIndexs =  DataPhotos[newIndex]
       DataPhotos = arrayMove(DataPhotos, oldIndex, newIndex)
       
-      // this.setState(({ photo }) => ({
-      //   photo: arrayMove(photo, oldIndex, newIndex),
-      // }),()=>{
-
-        
-
-      // });
+      this.setState(({ photo }) => ({
+        checkMode: -1
+      }));
       db.DataSave.update(oldIndexs.id,{
         src: newIndexs.src ,
         width: newIndexs.width,
