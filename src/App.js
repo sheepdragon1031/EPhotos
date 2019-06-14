@@ -59,11 +59,9 @@ class App extends Component {
     const { RGB, darkMode } = this.state;
     return (
       <div className="App">
-
           <Appbar darkMode={darkMode}  RGB={RGB} 
             changeMode={()=>this.changeMode()} changeRGB={()=>this.changeRGB()}/>
           <Index darkMode={darkMode}/>
-        
       </div>
     )
   }
